@@ -329,7 +329,7 @@ colorado_colors_2010 = ["darkorchid" if stadium == "COL" else "lightgrey"
 colorado_colors_2021 = ["darkorchid" if stadium == "COL" else "lightgrey" 
                         for stadium in comparison_data_2021_sorted.home]
 
-fig, axes = plt.subplots(2, 1, figsize=(11, 10))
+fig, axes = plt.subplots(2, 1, figsize=(8, 12))
 axes[0].set_ylabel("Stadium")
 axes[0].set_xlabel("Average Runs Per Game")
 axes[0].barh(comparison_data_2010_sorted.home, comparison_data_2010_sorted.runs_2010, color=colorado_colors_2010)
