@@ -210,12 +210,15 @@ plt.show()
 
 **Question 1: Geometry Choices**
 - Why is a horizontal bar chart better than a scatter plot for this data?
+  - Because it is easier to read and compare the values of the bars.
 - When would you choose a vertical bar chart over horizontal?
+  - when the names for the columns are longer.
 
 **Question 2: Aesthetic Mappings**
 - What does the color highlighting accomplish in Approach 4?
+  - It helps to highlight the Colorado Rockies as the most run-friendly ballpark in 2010.
 - How does position (x/y) compare to color for encoding data?
-
+  - Position is better for encoding data because it is easier to read and compare the values of the bars.
 :::
 
 ## Stage 4: Formatting for Your Audience
@@ -232,7 +235,7 @@ Let's create a publication-ready visualization:
 # Create a professional, publication-ready visualization
 
 # Set style for professional appearance
-plt.style.use("seaborn-v0_8-whitegrid")
+plt.style.use("seaborn-whitegrid")
 
 # Create the main visualization
 fig, ax = plt.subplots(figsize=(8, 6))
@@ -256,13 +259,14 @@ other_bar = plt.Rectangle((0,0),1,1, color="lightgrey", label="Other Stadiums")
 ax.legend(handles=[colorado_bar, other_bar], loc='lower right', frameon=True)
 
 # Add annotation for Colorado
-colorado_index = avgDF_2010_sorted[avgDF_2010_sorted.home == "COL"].index[0]
+colorado_index = avgDF_2010_sorted[avgDF_2010_sorted.home.reset_index().home == "COL"].index[0]
 colorado_runs = avgDF_2010_sorted[avgDF_2010_sorted.home == "COL"]["totalRuns"].iloc[0]
 ax.annotate(f"COL: {colorado_runs:.2f} runs/game", 
             xy=(colorado_runs, colorado_index), 
             xytext=(colorado_runs + 0.5, colorado_index),
             arrowprops=dict(arrowstyle='->', color='darkorchid', lw=2),
             fontsize=10, fontweight='bold', color='darkorchid')
+
 
 # Set x-axis to start from 0 for better comparison
 ax.set_xlim(0, max(avgDF_2010_sorted.totalRuns) * 1.1)
@@ -272,7 +276,6 @@ ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()
-
 # Print summary statistics
 print(f"\nSummary Statistics for 2010:")
 print(f"Colorado (COL) average runs per game: {colorado_runs:.2f}")
@@ -285,8 +288,10 @@ print(f"Colorado is {((colorado_runs / avgDF_2010_sorted.totalRuns.mean()) - 1) 
 
 **Question 1: Professional Formatting**
 - What elements make this visualization suitable for a business presentation?
+  - The suitable elements are the title, labels, and the legend.
 - Is the annotation on the visualization helpful?  Can you fix its placement?
-
+  - The annotation is helpful, but the placement is not optimal.
+    the index had to be reset to get the correct index.
 :::
 
 
@@ -311,7 +316,40 @@ comparison_data = pd.merge(
 )
 
 ## TODO: Create the visualization
+# Set style for professional appearance
+plt.style.use("seaborn-whitegrid")
 
+# Sort data for each year separately for better visualization
+comparison_data_2010_sorted = comparison_data.sort_values('runs_2010', ascending=True)
+comparison_data_2021_sorted = comparison_data.sort_values('runs_2021', ascending=True)
+
+# Create color arrays for each sorted dataset
+colorado_colors_2010 = ["darkorchid" if stadium == "COL" else "lightgrey" 
+                        for stadium in comparison_data_2010_sorted.home]
+colorado_colors_2021 = ["darkorchid" if stadium == "COL" else "lightgrey" 
+                        for stadium in comparison_data_2021_sorted.home]
+
+fig, axes = plt.subplots(2, 1, figsize=(11, 10))
+axes[0].set_ylabel("Stadium")
+axes[0].set_xlabel("Average Runs Per Game")
+axes[0].barh(comparison_data_2010_sorted.home, comparison_data_2010_sorted.runs_2010, color=colorado_colors_2010)
+axes[0].set_title("Most Run-Friendly Ballpark in 2010", 
+             fontsize=16, fontweight='bold', pad=20)
+
+axes[1].barh(comparison_data_2021_sorted.home, comparison_data_2021_sorted.runs_2021, color=colorado_colors_2021)
+axes[1].set_ylabel("Stadium")
+axes[1].set_xlabel("Average Runs Per Game")
+axes[1].set_title("Most Run-Friendly Ballpark in 2021", 
+             fontsize=16, fontweight='bold', pad=20)
+
+# Add legend
+colorado_bar = plt.Rectangle((0,0),1,1, color="darkorchid", label="Colorado Rockies")
+other_bar = plt.Rectangle((0,0),1,1, color="lightgrey", label="Other Stadiums")
+axes[0].legend(handles=[colorado_bar, other_bar], loc='lower right', frameon=True)
+axes[1].legend(handles=[colorado_bar, other_bar], loc='lower right', frameon=True)  
+
+plt.tight_layout()
+plt.show()
 ```
 
 ::: {.callout-important}
@@ -322,7 +360,11 @@ comparison_data = pd.merge(
 
 **Question 2: Explanation of the Visualization**
 - Ask AI To Add A Paragraph Here To Explain The Visualization
+
+The two-facet visualization presents a comparative analysis of total runs per stadium across the 2010 and 2021 baseball seasons. Each subplot displays a horizontal bar chart where stadiums are mapped to the y-axis and average runs per game to the x-axis, enabling easy comparison across all Major League Baseball venues. Colorado (COL) is highlighted in darkorchid to distinguish it from other stadiums, which appear in light grey. This visual encoding allows viewers to quickly identify not just Colorado's absolute performance, but also its relative standing within the league over time. The juxtaposition of the two years provides insight into whether stadium effects have remained consistent or changed over the decade, with Colorado's reputation for being run-friendly due to its high altitude (5,200 feet above sea level) serving as the focal point of investigation. The consistent color highlighting across facets maintains visual continuity, while the sorted data makes it easy to identify which stadiums rank highest in run production for each respective season.
+
 - Does AI come to the right conclusion?  If not, why not?
+  - No the AI does not come to the right conlusion because in 2021 Colarado was not the most run friendly park.
 :::
 
 ## Student Analysis Section: Mastering Object-Oriented Matplotlib {#student-analysis-section}
